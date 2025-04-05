@@ -1,39 +1,48 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
+import React, { useEffect } from 'react';
 import { Stack } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
-import { StatusBar } from 'expo-status-bar';
-import { useEffect } from 'react';
-import 'react-native-reanimated';
-
-import { useColorScheme } from '@/hooks/useColorScheme';
-
-// Prevent the splash screen from auto-hiding before asset loading is complete.
-SplashScreen.preventAutoHideAsync();
+import { ThemeProvider } from '@/context/ThemeContext';
+import { requestNotificationPermissions, setupNotificationListeners } from '@/services/notificationService';
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
-  const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
-  });
-
   useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
-    }
-  }, [loaded]);
+    const initializeNotifications = async () => {
+      try {
+        await requestNotificationPermissions();
+        const cleanup = setupNotificationListeners();
+        return cleanup;
+      } catch (error) {
+        console.error('Error initializing notifications:', error);
+      }
+    };
 
-  if (!loaded) {
-    return null;
-  }
+    initializeNotifications();
+  }, []);
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+    <ThemeProvider>
       <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
+        <Stack.Screen 
+          name="(tabs)" 
+          options={{ 
+            headerShown: false 
+          }} 
+        />
+        <Stack.Screen 
+          name="create-reminder" 
+          options={{ 
+            presentation: 'modal',
+            title: 'Create Reminder',
+            animation: 'slide_from_bottom'
+          }} 
+        />
+        <Stack.Screen 
+          name="settings" 
+          options={{ 
+            title: 'Settings',
+            animation: 'slide_from_right'
+          }} 
+        />
       </Stack>
-      <StatusBar style="auto" />
     </ThemeProvider>
   );
 }
