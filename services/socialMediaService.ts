@@ -1,9 +1,25 @@
+/**
+ * Social Media Service
+ * 
+ * This service handles sharing content to social media platforms:
+ * - Instagram sharing (photos and text)
+ * - WhatsApp sharing (photos and text)
+ * - Platform availability checking
+ * - Fallback sharing mechanisms
+ * 
+ * @module socialMediaService
+ */
+
 import * as FileSystem from 'expo-file-system';
 import { Platform, Linking } from 'react-native';
 import * as Sharing from 'expo-sharing';
 import * as IntentLauncher from 'expo-intent-launcher';
 
-// Check if Instagram is installed
+/**
+ * Checks if Instagram is installed on the device
+ * 
+ * @returns Promise<boolean> - True if Instagram is installed
+ */
 const isInstagramInstalled = async (): Promise<boolean> => {
   try {
     if (Platform.OS === 'ios') {
@@ -18,7 +34,11 @@ const isInstagramInstalled = async (): Promise<boolean> => {
   }
 };
 
-// Check if WhatsApp is installed
+/**
+ * Checks if WhatsApp is installed on the device
+ * 
+ * @returns Promise<boolean> - True if WhatsApp is installed
+ */
 const isWhatsAppInstalled = async (): Promise<boolean> => {
   try {
     if (Platform.OS === 'ios') {
@@ -33,7 +53,14 @@ const isWhatsAppInstalled = async (): Promise<boolean> => {
   }
 };
 
-// Share to Instagram
+/**
+ * Shares content to Instagram
+ * 
+ * @param photoUri - Optional URI of the photo to share
+ * @param title - Title of the post
+ * @param description - Description or caption for the post
+ * @returns Promise<boolean> - True if sharing was successful
+ */
 export const shareToInstagram = async (photoUri: string | undefined, title: string, description: string): Promise<boolean> => {
   try {
     const instagramInstalled = await isInstagramInstalled();
@@ -104,7 +131,14 @@ export const shareToInstagram = async (photoUri: string | undefined, title: stri
   }
 };
 
-// Share to WhatsApp
+/**
+ * Shares content to WhatsApp
+ * 
+ * @param photoUri - Optional URI of the photo to share
+ * @param title - Title of the message
+ * @param description - Message content
+ * @returns Promise<boolean> - True if sharing was successful
+ */
 export const shareToWhatsApp = async (photoUri: string | undefined, title: string, description: string): Promise<boolean> => {
   try {
     const whatsappInstalled = await isWhatsAppInstalled();
